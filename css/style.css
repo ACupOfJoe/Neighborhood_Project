@@ -7,10 +7,22 @@ html, body {
 
 @media screen and (min-width: 1400px)
 {
-		#map { 
-		position: static !important;
-		width:70% !important;
-		height: 100% !important;
-	 }
+	.container { 
+		display: flex; 
+		flex-wrap: wrap;
+		height: 100%;
+		width: 100%;
+	}
+
+	#sidepanel { 
+		
+		width: 30%;
+		float: left;
+	}
+
+	#map { 
+	width:70% !important;
+	height: 100% !important;
+ 	}
 }
 }
