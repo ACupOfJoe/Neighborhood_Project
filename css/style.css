@@ -5,18 +5,24 @@ html, body {
 	padding: 0;
 }
 
-@media screen and (min-width: 1400px)
-{
+
+@media screen and (min-width: 360px) and (max-width: 767px){
+
+
+
+}
+
+@media screen and (min-width: 768px) and (max-width: 1399px) { 
 	.container { 
-		display: flex; 
-		flex-wrap: wrap;
-		height: 100%;
-		width: 100%;
+	display: flex; 
+	flex-wrap: wrap;
+	height: 100%;
+	width: 100%;
 	}
 
-	#sidepanel { 
+	#panel { 
 		
-		width: 30%;
+		width: 25%;
 		float: left;
 	}
 
@@ -25,4 +31,25 @@ html, body {
 	height: 100% !important;
  	}
 }
+
+@media screen and (min-width: 1400px)
+{
+	.container { 
+	display: flex; 
+	flex-wrap: wrap;
+	height: 100%;
+	width: 100%;
+	}
+
+	#panel { 
+		
+		width: 25%;
+		float: left;
+	}
+
+	#map { 
+	width:70% !important;
+	height: 100% !important;
+ 	}
+
 }

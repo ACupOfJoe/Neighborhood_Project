@@ -16,3 +16,10 @@ function initMap() {
 		map.setCenter(center);
 	});
 }
+
+
+function position(latitude, longitude) { 
+	this.latitude = ko.observable(latitude); 
+	this.longitude = ko.observable(longitude);
+	this.latLng = ko.observableArray([latitude, longitude])
+}
