@@ -7,6 +7,12 @@ html, body {
 
 
 @media screen and (min-width: 360px) and (max-width: 767px){
+	.container { 
+	display: flex; 
+	flex-wrap: wrap;
+	height: 100%;
+	width: 100%;
+	}
 
 
 
@@ -21,13 +27,12 @@ html, body {
 	}
 
 	#panel { 
-		
-		width: 25%;
-		float: left;
+	width: 25%;
+	float: left;
 	}
 
 	#map { 
-	width:75% !important;
+	width:70% !important;
 	height: 100% !important;
  	}
 }
@@ -48,7 +53,7 @@ html, body {
 	}
 
 	#map { 
-	width:75% !important;
+	width:70% !important;
 	height: 100% !important;
  	}
 
