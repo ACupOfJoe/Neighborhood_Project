@@ -38,25 +38,25 @@ function execute() {
 	initMap();
 
 
-	var sewardPark =  new markerPosition(47.550260, -122.264850, "Seward Park, WA");
-	var burkeGilmanTrail = new markerPosition(47.69589, -122.278065, "Burke-Gilman Trail, WA");
-	var discoveryPark = new markerPosition(47.657302, -122.405496, "Discovery Park, WA");
-	var rattlesnakeLedge = new  markerPosition(47.445825, -121.794994, "Rattlesnake Ledge, WA");
-	var littleSiAndMountSi = new markerPosition(47.498714, -121.755943, "Little Si and Mount Si, WA");
-	var mountPilchuck = new markerPosition(48.057881, -121.796792, "Mt. Pilchuk, WA");
-	var summerlandMountRanier = new markerPosition(46.888362, -121.611019, "Summerland, Mt.Ranier, WA");
+	var burkeGilmanTrail = new markerPosition(47.69589, -122.278065, "Burke-Gilman Trail");
+	var discoveryPark = new markerPosition(47.657302, -122.405496, "Discovery Park");
+	var rattlesnakeLedge = new  markerPosition(47.445825, -121.794994, "Rattlesnake Ridge");
+	var mountSi =  new markerPosition(47.3027, -121.4424, "Mount Si");
+	var mountPilchuck = new markerPosition(48.03287, -121.47521, "Mount Pilchuck");
+	var summerlandMountRanier = new markerPosition(46.888362, -121.611019, "Mount Ranier");
+	var twinFallsWashington = new markerPosition(47.44542, -121.69638, "Twin Falls (Washington)");
 
-	var sewardParkViewModel = new markerPositionViewModel(sewardPark);
 	var burkeGilmanTrailViewModel = new markerPositionViewModel(burkeGilmanTrail);
 	var discoveryParkViewModel = new markerPositionViewModel(discoveryPark);
 	var rattlesnakeLedgeViewModel = new markerPositionViewModel(rattlesnakeLedge);
-	var littleSiAndMountSiViewModel = new markerPositionViewModel(littleSiAndMountSi);
+	var mountSiViewModel = new markerPositionViewModel(mountSi);
 	var mountPilchuckViewModel = new markerPositionViewModel(mountPilchuck);
 	var summerlandMountRanierViewModel = new markerPositionViewModel(summerlandMountRanier);
+	var twinFallsWashingtonViewModel = new markerPositionViewModel(twinFallsWashington);
 	
-	var locations = ko.observableArray([sewardParkViewModel, burkeGilmanTrailViewModel, discoveryParkViewModel,
-						rattlesnakeLedgeViewModel, littleSiAndMountSiViewModel,
-						mountPilchuckViewModel, summerlandMountRanierViewModel]);
+	var locations = ko.observableArray([burkeGilmanTrailViewModel, discoveryParkViewModel,
+						rattlesnakeLedgeViewModel, mountSiViewModel,
+						mountPilchuckViewModel, summerlandMountRanierViewModel, twinFallsWashingtonViewModel]);
 	var largeInfowindow = new google.maps.InfoWindow();
 
 
@@ -104,30 +104,36 @@ function execute() {
 //This part was borrowed from "ud864-maps-api/Project_Code_5_BeingStylish.html" 
 //lines 205-216
 //https://stackoverflow.com/questions/41651251/wikipedia-api-file-not-found-error
+//https://forum.freecodecamp.org/t/im-working-on-wikipedia-viewer-project-and-having-problem-with-wiki-api-solved/1058/17
+//https://stackoverflow.com/questions/41428334/retrieving-extract-from-wikipedia-api
 function populateInfoWindow(marker, infowindow) { 
-		if (infowindow.marker != marker) { 
-				$.ajax({
-				url: 'https://en.wikipedia.org/w/api.php',
-				data: {
-				action: 'query',
-				list: 'search',
-				srsearch: marker.title,
-				format: 'json',
-				prop: 'extract',
-				},
-				dataType: 'jsonp',
-				success: function (x) {
-				console.log('title', x.query.search[0]);
-				infowindow.marker = marker;
-				infowindow.setContent('<div>' + x.query.search[0].snippet + '</div>');
-				infowindow.open(map, marker);
-				}
-			});
+	if (infowindow.marker != marker) {
+ 			var wikiUrl = ' https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles='+ marker.title + '&redirects&callback=?'
+
+		    var wikiRequestTimeout = setTimeout(function() { 
+		        $wikiElem.text("failed to get wikipedia resources");
+		    }, 8000000);
 			
+		    $.ajax({
+			        url: wikiUrl,
+			        dataType: "jsonp",
+			        // jsonp: "callback",
+			        success: function(response) { 
+			        	pageId = Object.keys(response.query.pages)[0];
+			        	console.log(marker.title)
+			       		console.log(pageId);
+			            console.log(response['query']['pages'][String(pageId)]['extract']);
+			       		infowindow.marker = marker;
+						infowindow.setContent('<div>' + response['query']['pages'][String(pageId)]['extract'] + '</div>');
+						infowindow.open(map, marker);
+
+			            }
+			}); 	
+			
+			}
 			infowindow.addListener('closeclick', function() { 
 				infowindow.marker = null; 
-			}) 
-		}
+		}) 
 }
 
 // This function takes in a COLOR, and then creates a new marker
