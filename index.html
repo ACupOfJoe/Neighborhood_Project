@@ -10,8 +10,18 @@
   </head>
 <body>
 	<div class="container">
+		<!-- Lines 14 - were borrowed from "My Commute - Distance Matrix API Part 2 from Udacity's Lecture Series" -->
 		<div id="panel">
-			<p>Contains some Text</p>
+			<h1>Find some local hiking places within a certain radius from a starting location of your choosing!<h1>
+			<select id="time_radius">
+				<option value="30">30 minutes</option>
+				<option value="60">1 hour</option>
+				<option value="120">2 hours</option>
+				<option value="180">3 hours</option>
+			</select>
+			<input id="starting_location_string" type="text" placeholder="Ex: Seattle, WA">
+			<input id="starting_location_button" type="button" value="Go!">
+
 		</div>
 		<div id="map"></div>
 	</div>

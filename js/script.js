@@ -14,10 +14,11 @@ function markerPositionViewModel(markerPos)
 }
 
 
-
+var markers = []; 
+var map;
 function execute() { 
 
-	var map;
+
 		function initMap() {
 			map = new google.maps.Map(document.getElementById('map'), {
 			center: {lat: 47.6062, lng: -122.3321},
@@ -33,6 +34,7 @@ function execute() {
 			google.maps.event.addDomListener(window, 'resize', function() {
 				map.setCenter(center);
 			});
+
 		}
 
 	initMap();
@@ -54,7 +56,7 @@ function execute() {
 	var summerlandMountRanierViewModel = new markerPositionViewModel(summerlandMountRanier);
 	var twinFallsWashingtonViewModel = new markerPositionViewModel(twinFallsWashington);
 	
-	var locations = ko.observableArray([burkeGilmanTrailViewModel, discoveryParkViewModel,
+	var locations = ([burkeGilmanTrailViewModel, discoveryParkViewModel,
 						rattlesnakeLedgeViewModel, mountSiViewModel,
 						mountPilchuckViewModel, summerlandMountRanierViewModel, twinFallsWashingtonViewModel]);
 	var largeInfowindow = new google.maps.InfoWindow();
@@ -68,37 +70,55 @@ function execute() {
     // Create a "highlighted location" marker color for when the user
     // mouses over the marker.
     var highlightedIcon = makeMarkerIcon('FFFF24');
-	var markers = ko.computed(function() {
-		var markers = ko.observableArray();
-		for (var i = 0; i < locations().length; i++){
-		var location = locations()[i]
-		console.log(locations()[i].Name())
+	for (var i = 0; i < locations.length; i++){
+		var location = locations[i]
+		console.log(locations[i].Name())
 		var marker = new google.maps.Marker({
-           position: {lat: locations()[i].Latitude(), lng: locations()[i].Longitude()},
-        	title: locations()[i].Name(),
-            animation: google.maps.Animation.DROP,
-            id: i,
-            map: map,
-            icon: defaultIcon
-            });
+	       position: {lat: locations[i].Latitude(), lng: locations[i].Longitude()},
+	    	title: locations[i].Name(),
+	        animation: google.maps.Animation.DROP,
+	        id: i,
+	        map: map,
+	        icon: defaultIcon
+	        });
 
-		markers.push(marker)
-		marker.addListener('click', function() { 
-			populateInfoWindow(this, largeInfowindow);
-		});
+			markers.push(marker)
+			marker.addListener('click', function() { 
+				populateInfoWindow(this, largeInfowindow);
+			});
 
-		//This part was borrowed from "ud864-maps-api/Project_Code_5_BeingStylish.html" 
-		//lines 190 - 195
-		marker.addListener('mouseover', function() {
-			this.setIcon(highlightedIcon)
-		})
+			//This part was borrowed from "ud864-maps-api/Project_Code_5_BeingStylish.html" 
+			//lines 190 - 195
+			marker.addListener('mouseover', function() {
+				this.setIcon(highlightedIcon)
+			})
 
-        marker.addListener('mouseout', function() {
-        	this.setIcon(defaultIcon);
-        });
+	        marker.addListener('mouseout', function() {
+	        	this.setIcon(defaultIcon);
+	        });
+			document.getElementById('starting_location_button').addEventListener('click', function() {
+					searchWithinTime()
+				});
 	}
-	return markers;
-	});
+	};
+
+//This set of code was taken from "Project_Code_10_DisplayingRoutesDirectionsService.html" lines 357-373
+// This function will loop through the markers array and display them all.
+function showListings() {
+	var bounds = new google.maps.LatLngBounds();
+	// Extend the boundaries of the map for each marker and display the marker
+	for (var i = 0; i < markers.length; i++) {
+	  markers[i].setMap(map);
+	  bounds.extend(markers[i].position);
+	}
+	map.fitBounds(bounds);
+}
+
+// This function will loop through the listings and hide them all.
+function hideListings() {
+	for (var i = 0; i < markers.length; i++) {
+	  markers[i].setMap(null);
+	}
 }
 
 //This part was borrowed from "ud864-maps-api/Project_Code_5_BeingStylish.html" 
@@ -151,4 +171,86 @@ function makeMarkerIcon(markerColor) {
 }
 
 
+function searchWithinTime() { 
+	var distanceMatrixService = new google.maps.DistanceMatrixService;
+	var address = document.getElementById('starting_location_string').value
+	console.log(markers[0].title);
+
+	if (address == '') { 
+		window.alert('Sorry! You need to enter an address');
+	}
+	else {
+		hideListings(markers); 
+		var origins = [];
+		for (var i = 0; i < markers.length; i++) { 
+			origins[i] = markers[i].position;
+			console.log(String(origins[i]) + 'Origins ' + i);
+		}
+	var destination = address;
+	distanceMatrixService.getDistanceMatrix({
+		origins: origins, 
+		destinations: [destination],
+		travelMode: google.maps.TravelMode['DRIVING'],
+		unitSystem: google.maps.UnitSystem.IMPERIAL
+
+	}, function(response, status) { 
+		if (status !== google.maps.DistanceMatrixStatus.OK) { 
+			window.alert('Error was' + status); 
+		} 
+		else { 
+			displayMarkersWithinTime(response);
+		}
+		});
+	}
+}
+
+function displayMarkersWithinTime(response) { 
+	var maxDuration = document.getElementById("time_radius").value;
+	var origins = response.originAddresses; 
+	var destination = response.destinationAddresses;
+
+
+	// Parse through the results, and get he distance and duration of each. 
+	// Because there might be multiple origins and destinations we have a 
+	// nested loop. Then, make sure at least 1 result was found. 
+
+	var atLeastOne = false; 
+	for (var i = 0; i < origins.length; i++) { 
+		var results = response.rows[i].elements;
+		console.log(results)
+		for (var j = 0; j < results.length; j++) { 
+			var element = results[j];
+			if (element.status === "OK") { 
+				// The distance is returned in feet, but the TEXT is in miles. If we watned to switch 
+				// the function to show markers within a user-enetered DISTANCE, we would need the 
+				// value for distance, but now we only need the text.
+				var distanceText = element.distance.text; 
+				// Duration value is given in a second so we can make it MINUTES. We need both the value
+				// and the text. 
+				var duration = element.duration.value / 60; 
+				var durationText = element.duration.text;
+				if (duration <= maxDuration) { 
+					// the origin [i] should = the markers[i]
+					console.log(markers[i].title);
+					//markers[i].setMap(map);
+					atLeastOne = true; 
+					// Create a mini infowindow to open immediately and contain the 
+					// distance and duration 
+					var infowindow = new google.maps.InfoWindow({ 
+						content: durationText + ' away, ' + distanceText 
+					});
+					infowindow.setPosition(markers[i].position);
+					infowindow.open(map);
+					// Put this in so that this smallw indow closes if the user clicks 
+					// the marker, when the big infowindow opens 
+					markers[i].infowindow= infowindow; 
+					google.maps.event.addListener(markers[i], 'click', function() {
+						this.infowindow.close();
+					});
+				}
+
+			}
+		}
+	}
+}
 
