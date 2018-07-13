@@ -72,7 +72,6 @@ function execute() {
     var highlightedIcon = makeMarkerIcon('FFFF24');
 	for (var i = 0; i < locations.length; i++){
 		var location = locations[i]
-		console.log(locations[i].Name())
 		var marker = new google.maps.Marker({
 	       position: {lat: locations[i].Latitude(), lng: locations[i].Longitude()},
 	    	title: locations[i].Name(),
@@ -96,10 +95,11 @@ function execute() {
 	        marker.addListener('mouseout', function() {
 	        	this.setIcon(defaultIcon);
 	        });
-			document.getElementById('starting_location_button').addEventListener('click', function() {
+			
+	}
+	document.getElementById('starting_location_button').addEventListener('click', function() {
 					searchWithinTime()
 				});
-	}
 	};
 
 //This set of code was taken from "Project_Code_10_DisplayingRoutesDirectionsService.html" lines 357-373
@@ -140,11 +140,8 @@ function populateInfoWindow(marker, infowindow) {
 			        // jsonp: "callback",
 			        success: function(response) { 
 			        	pageId = Object.keys(response.query.pages)[0];
-			        	console.log(marker.title)
-			       		console.log(pageId);
-			            console.log(response['query']['pages'][String(pageId)]['extract']);
 			       		infowindow.marker = marker;
-						infowindow.setContent('<div>' + response['query']['pages'][String(pageId)]['extract'] + '</div>');
+						infowindow.setContent('<h3>' + marker.title + '</h3>' + '<div>' + response['query']['pages'][String(pageId)]['extract'] + '</div>');
 						infowindow.open(map, marker);
 
 			            }
@@ -172,19 +169,16 @@ function makeMarkerIcon(markerColor) {
 
 
 function searchWithinTime() { 
-	var distanceMatrixService = new google.maps.DistanceMatrixService;
+	var distanceMatrixService = new google.maps.DistanceMatrixService();
 	var address = document.getElementById('starting_location_string').value
-	console.log(markers[0].title);
-
 	if (address == '') { 
 		window.alert('Sorry! You need to enter an address');
 	}
 	else {
 		hideListings(markers); 
-		var origins = [];
+		var origins= [];
 		for (var i = 0; i < markers.length; i++) { 
 			origins[i] = markers[i].position;
-			console.log(String(origins[i]) + 'Origins ' + i);
 		}
 	var destination = address;
 	distanceMatrixService.getDistanceMatrix({
@@ -193,14 +187,13 @@ function searchWithinTime() {
 		travelMode: google.maps.TravelMode['DRIVING'],
 		unitSystem: google.maps.UnitSystem.IMPERIAL
 
-	}, function(response, status) { 
-		if (status !== google.maps.DistanceMatrixStatus.OK) { 
-			window.alert('Error was' + status); 
-		} 
-		else { 
-			displayMarkersWithinTime(response);
-		}
-		});
+	},  function(response, status) {
+            if (status !== google.maps.DistanceMatrixStatus.OK) {
+              window.alert('Error was: ' + status);
+            } else {
+              displayMarkersWithinTime(response);
+            }
+          });
 	}
 }
 
@@ -217,9 +210,11 @@ function displayMarkersWithinTime(response) {
 	var atLeastOne = false; 
 	for (var i = 0; i < origins.length; i++) { 
 		var results = response.rows[i].elements;
-		console.log(results)
+		console.log("results " + i + " " + String(results))
 		for (var j = 0; j < results.length; j++) { 
 			var element = results[j];
+				console.log("element " +  i + " " + String(element))
+
 			if (element.status === "OK") { 
 				// The distance is returned in feet, but the TEXT is in miles. If we watned to switch 
 				// the function to show markers within a user-enetered DISTANCE, we would need the 
@@ -237,7 +232,7 @@ function displayMarkersWithinTime(response) {
 					// Create a mini infowindow to open immediately and contain the 
 					// distance and duration 
 					var infowindow = new google.maps.InfoWindow({ 
-						content: durationText + ' away, ' + distanceText 
+						content: '<h3>' + markers[i].title + '</h3> is ' + durationText + ' away, ' + distanceText 
 					});
 					infowindow.setPosition(markers[i].position);
 					infowindow.open(map);
