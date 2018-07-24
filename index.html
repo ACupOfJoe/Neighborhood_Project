@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="css/style.css">
 
   </head>
-<body>
+<body onload="filterAndDisplayMarkers()">
 	<div class="container">
 		<!-- Lines 14 - were borrowed from "My Commute - Distance Matrix API Part 2 from Udacity's Lecture Series" -->
 		<div id="panel">
-			<h1>Find some local hiking places within a certain radius from a starting location of your choosing!<h1>
+			<div id="title1">
+			<h3>Find some local hiking places within a certain radius from a starting location of your choosing!</h3>
+			</div>
 			<select id='time_radius'>
-				
 				<option value="30">30 minutes</option>
 				<option value="60">1 hour</option>
 				<option value="120">2 hours</option>
@@ -22,6 +23,10 @@
 			</select>
 			<input id="starting_location_string" type="text" placeholder="Ex: Seattle, WA">
 			<input id="starting_location_button" type="button" value="Go!">
+			<h3>Filter the Markers By Name</h3>
+			<input type="text" id="filter-by-name" placeholder="Ex: Seattle, WA"  onchange="filterAndDisplayMarkers()">
+			<ul id="ListOfPlaces">
+			</ul>
 
 		</div>
 		<div id="map"></div>
@@ -29,7 +34,7 @@
 	<script src="js/lib/knockout-3.2.0.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="js/script.js"></script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyAxnOiuoL4eGMJ-HiCIRKPy3Jm-tBOSDW0&callback=execute"
+	<script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry&key=AIzaSyAxnOiuoL4eGMJ-HiCIRKPy3Jm-tBOSDW0&callback=execute"
 	type="text/javascript"></script>
 </body>
 

@@ -6,32 +6,71 @@ html, body {
 }
 
 
-@media screen and (min-width: 360px) and (max-width: 767px){
-	.container { 
-	display: flex; 
+@media screen and (min-width: 360px) and (max-width: 886px){
+
+	h3 {
+		font-size: 12px;
+	}
+
+	#title1 {
+		height: 300px;
+	}
+
+	.container {
+	display: flex;
 	flex-wrap: wrap;
 	height: 100%;
+	width: 100%;
+	}
+
+	#panel {
+	height: 300px;
+	width: 90%;
+	}
+
+	#map {
 	width: 100%;
 	}
 
 
 
 }
-
-@media screen and (min-width: 768px) and (max-width: 1399px) { 
-	.container { 
-	display: flex; 
+@media screen and (min-width: 887px) and (max-width: 919px) {
+	.container {
+	display: flex;
 	flex-wrap: wrap;
 	height: 100%;
 	width: 100%;
 	}
 
-	#panel { 
-	width: 25%;
+	#panel {
+	width: 266px;
 	float: left;
 	}
 
-	#map { 
+	#map {
+	float: left;
+	width:70% !important;
+	height: 100% !important;
+ 	}
+}
+
+
+@media screen and (min-width: 920px) and (max-width: 1399px) {
+	.container {
+	display: flex;
+	flex-wrap: wrap;
+	height: 100%;
+	width: 100%;
+	}
+
+	#panel {
+	width: 266px;
+	float: left;
+	}
+
+	#map {
+	float: left;
 	width:70% !important;
 	height: 100% !important;
  	}
@@ -39,20 +78,20 @@ html, body {
 
 @media screen and (min-width: 1400px)
 {
-	.container { 
-	display: flex; 
+	.container {
+	display: flex;
 	flex-wrap: wrap;
 	height: 100%;
 	width: 100%;
 	}
 
-	#panel { 
-		
-		width: 25%;
+	#panel {
+
+		width: 350px;
 		float: left;
 	}
 
-	#map { 
+	#map {
 	width:70% !important;
 	height: 100% !important;
  	}

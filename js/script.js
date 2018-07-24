@@ -88,7 +88,7 @@ function execute() {
 	for (var i = 0; i < locations.length; i++){
 		var location = locations[i]
 		var marker = new google.maps.Marker({
-		   position: {lat: locations[i].Latitude(), lng: locations[i].Longitude()},
+		   	position: {lat: locations[i].Latitude(), lng: locations[i].Longitude()},
 			title: locations[i].Name(),
 			animation: google.maps.Animation.DROP,
 			id: i,
@@ -112,10 +112,13 @@ function execute() {
 			});
 
 	}
+		// This autocomplete is for usei nthe saerch within time entry box.
+	var timeAutocomplete = new google.maps.places.Autocomplete(
+		document.getElementById('starting_location_string'));
 	document.getElementById('starting_location_button').addEventListener('click', function() {
 					searchWithinTime()
 				});
-	};
+};
 
 //This set of code was taken from "Project_Code_10_DisplayingRoutesDirectionsService.html" lines 357-373
 // This function will loop through the markers array and display them all.
@@ -156,13 +159,13 @@ function populateInfoWindow(marker, infowindow) {
 			var wikiRequestTimeout = setTimeout(function() {
 				$wikiElem.text('failed to get wikipedia resources');
 			}, 8000000);
-
+			var defaultIcon = makeMarkerIcon('0091ff');
 			$.ajax({
 					url: wikiUrl,
 					dataType: 'jsonp',
 					success: function(response) {
 						pageId = Object.keys(response.query.pages)[0];
-						infowindow.marker = marker;
+						infowindow.marker = marker1;
 						infowindow.setContent('<h3>' + marker.title + '</h3>' + '<div>' + response['query']['pages'][String(pageId)]['extract'] + '</div>');
 						infowindow.open(map, marker);
 
@@ -197,7 +200,7 @@ function populateInfoWindowIncludingDistanceInfo(marker, infowindow,  durationTe
 						infowindow.setContent('<h3>' + marker.title + '</h3><p>' + durationText + ' away, ' + distanceText + '</p></br>'
 							 + '<div>' + response['query']['pages'][String(pageId)]['extract'] + '</div>');
 						infowindow.open(map, marker);
-
+						marker.setMap(map);
 						}
 			});
 
@@ -259,6 +262,65 @@ function searchWithinTime() {
 			});
 	}
 }
+
+/**
+@description: This method is used to hide markers based on their title from both the map and the list
+@param (Object List) markers: This is the list of all the markers that are available
+@param (String) title: This is the string that we want to check for if the marker's title contains
+**/
+function hideMarkersBasedOnTitle(markers, title) {
+	console.log(markers)
+	var ul = document.getElementById("ListOfPlaces")
+	//This forloop clears all the existing elements
+	for (var j = 0; j < markers.length; j++) {
+		var li = document.getElementById(markers[j].title);
+		if (document.getElementById(markers[j].title) != null) {
+			li.outerHTML = '';
+		}
+	}
+	for (var i = 0 ; i < markers.length; i++)  {
+		if (markers[i].title.includes(title)) {
+			markers[i].setMap(map);
+			//The next 4 lines prevents duplications from happening.
+			var li = document.getElementById(markers[i].title);
+			if (document.getElementById(markers[i].title) != null) {
+				li.outerHTML = '';
+			}
+			var li = document.createElement("li");
+			li.appendChild(document.createTextNode(markers[i].title));
+			li.setAttribute("id", markers[i].title);
+			ul.appendChild(li);
+
+		}
+		else {
+			markers[i].setMap(null);
+
+		}
+	}
+};
+
+/**
+@description: This method filters and displays the appropriate markers on both the list and map
+**/
+function filterAndDisplayMarkers() {
+	var suggestion = document.getElementById('filter-by-name').value
+	//The next 6 lines populate the markers list.
+	var ul = document.getElementById("ListOfPlaces")
+
+	if (suggestion) {
+		hideMarkersBasedOnTitle(markers, suggestion);
+	}
+	else {
+		showListings(markers, map);
+		for (i = 0; i < markers.length; i++) {
+		var li = document.createElement("li");
+		li.appendChild(document.createTextNode(markers[i].title));
+		li.setAttribute("id", markers[i].title);
+		ul.appendChild(li);
+	}
+	}
+
+};
 
 /**
 @description: This method is used to display all the markers that fit a certain time radius
