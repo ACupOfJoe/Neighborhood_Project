@@ -160,20 +160,20 @@ function populateInfoWindow(marker, infowindow) {
 	if (infowindow.marker != marker) {
 			var wikiUrl = ' https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles='+ marker.title + '&redirects&callback=?'
 
-			var wikiRequestTimeout = setTimeout(function() {
-				$wikiElem.text('failed to get wikipedia resources');
-			}, 8000000);
 			var defaultIcon = makeMarkerIcon('0091ff');
 			$.ajax({
 					url: wikiUrl,
 					dataType: 'jsonp',
+					timeout: 20000,
 					success: function(response) {
 						pageId = Object.keys(response.query.pages)[0];
 						infowindow.marker = marker;
 						infowindow.setContent('<h3>' + marker.title + '</h3>' + '<div class="MarkerPopUp">' + response['query']['pages'][String(pageId)]['extract'] + '</div>');
 						infowindow.open(map, marker);
-
-						}
+					},
+					error: function(parsedJSON, textStatus, errorThrown) {
+						infowindow.setContent(('<h3>' + parsedJSON.status + "</h3><br><h3>" + textStatus + "</h3><br><h3>" + errorThrown + "</h3>");
+					}
 			});
 
 			}
