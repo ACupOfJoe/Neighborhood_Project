@@ -99,17 +99,9 @@ function execute() {
 			markers.push(marker)
 			marker.addListener('click', function() {
 				populateInfoWindow(this, largeInfowindow);
-			});
-
-			//This part was borrowed from "ud864-maps-api/Project_Code_5_BeingStylish.html"
-			//lines 190 - 195
-			marker.addListener('mouseover', function() {
 				toggleBounce(this)
-			})
-
-			marker.addListener('mouseout', function() {
-				this.setIcon(defaultIcon);
 			});
+
 
 	}
 		// This autocomplete is for usei nthe saerch within time entry box.
