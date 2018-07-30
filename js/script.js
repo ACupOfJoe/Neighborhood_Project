@@ -177,8 +177,8 @@ function populateInfoWindow(marker, infowindow) {
 					dataType: 'jsonp',
 					success: function(response) {
 						pageId = Object.keys(response.query.pages)[0];
-						infowindow.marker = marker1;
-						infowindow.setContent('<h3>' + marker.title + '</h3>' + '<div>' + response['query']['pages'][String(pageId)]['extract'] + '</div>');
+						infowindow.marker = marker;
+						infowindow.setContent('<h3>' + marker.title + '</h3>' + '<div class="MarkerPopUp">' + response['query']['pages'][String(pageId)]['extract'] + '</div>');
 						infowindow.open(map, marker);
 
 						}
@@ -377,6 +377,4 @@ function displayMarkersWithinTime(response) {
 
 			}
 		}
-	}
-
-
+};
