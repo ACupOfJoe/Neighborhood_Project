@@ -104,7 +104,7 @@ function execute() {
 			//This part was borrowed from "ud864-maps-api/Project_Code_5_BeingStylish.html"
 			//lines 190 - 195
 			marker.addListener('mouseover', function() {
-				this.setIcon(highlightedIcon)
+				toggleBounce(this)
 			})
 
 			marker.addListener('mouseout', function() {
@@ -140,6 +140,18 @@ function hideListings() {
 	  markers[i].setMap(null);
 	}
 }
+
+
+/**
+@description: This method toggles the  bounce for a single marker.
+**/
+function toggleBounce(marker) {
+        if (marker.getAnimation() !== null) {
+          marker.setAnimation(null);
+        } else {
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+        }
+      }
 
 //This part was borrowed from "ud864-maps-api/Project_Code_5_BeingStylish.html"
 //lines 205-216
