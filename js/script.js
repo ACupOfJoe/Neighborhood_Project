@@ -361,7 +361,7 @@ function displayMarkersWithinTime(response) {
 					atLeastOne = true;
 					// Create a mini infowindow to open immediately and contain the
 					// distance and duration
-					populateInfoWindowIncludingDistanceInfo(markers[i], infowindow, durationText, distanceText));
+					populateInfoWindowIncludingDistanceInfo(markers[i], infowindow, durationText, distanceText);
 
 					};
 				}
