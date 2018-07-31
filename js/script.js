@@ -187,31 +187,7 @@ and google's distance matrix api
 @param (marker) marker: This parameter is the marker whose infowindow we want to populate
 @param (infowindow) infowindow: This parmaeter is the infowindow object that we are manipulating
 **/
-function populateInfoWindowIncludingDistanceInfo(marker, infowindow,  durationText, distanceText) {
-	if (infowindow.marker != marker) {
-			var wikiUrl = ' https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles='+ marker.title + '&redirects&callback=?'
-			$.ajax({
-					url: wikiUrl,
-					dataType: 'jsonp',
-					timeout: 20000,
-					success: function(response) {
-						pageId = Object.keys(response.query.pages)[0];
-						infowindow.marker = marker;
-						infowindow.setContent('<h3>' + marker.title + '</h3><p>' + durationText + ' away, ' + distanceText + '</p></br>'
-							 + '<div>' + response['query']['pages'][String(pageId)]['extract'] + '</div>');
-						infowindow.open(map, marker);
-						marker.setMap(map);
-					},
-					error: function(parsedJSON, textStatus, errorThrown) {
-						infowindow.setContent('<h3>' + parsedJSON.status + "</h3><br><h3>" + textStatus + "</h3><br><h3>" + errorThrown + "</h3>");
-					}
-			});
 
-			}
-			infowindow.addListener('closeclick', function() {
-				infowindow.marker = null;
-		})
-}
 
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
@@ -361,11 +337,18 @@ function displayMarkersWithinTime(response) {
 					atLeastOne = true;
 					// Create a mini infowindow to open immediately and contain the
 					// distance and duration
-					populateInfoWindowIncludingDistanceInfo(markers[i], infowindow, durationText, distanceText);
-
-					};
+					var infowindow = new google.maps.InfoWindow({
+                  	content: "<h3>" + markers[i].title + "</h3><br>" + durationText + ' away, ' + distanceText });
+	                infowindow.open(map, markers[i]);
+	                // Put this in so that this small window closes if the user clicks
+	                // the marker, when the big infowindow opens
+	                markers[i].infowindow = infowindow;
+	                google.maps.event.addListener(markers[i], 'click', function() {
+	                  this.infowindow.close();
+	                });
 				}
 
 			}
-		}
+	}
+}
 };
