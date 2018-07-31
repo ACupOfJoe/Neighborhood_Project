@@ -31,7 +31,8 @@ function markerPositionViewModel(markerPos)
 //These are global variables that will be used throughout the program
 var markers = [];
 var map;
-var infowindow/**
+
+/**
 @Description: This is the call back function that runs all of the other functions. It starts with map initialization and
 marker initializaton. Then it defines the different types of markers. Then it populates the infowindows and
 adds event listeners.
@@ -256,6 +257,7 @@ function hideMarkersBasedOnTitle(markers, title) {
 		if (document.getElementById(markers[j].title) != null) {
 			li.outerHTML = '';
 		}
+
 	}
 	for (var i = 0 ; i < markers.length; i++)  {
 		if (markers[i].title.includes(title)) {
@@ -290,13 +292,14 @@ function filterAndDisplayMarkers() {
 		hideMarkersBasedOnTitle(markers, suggestion);
 	}
 	else {
-		showListings(markers, map);
 		for (i = 0; i < markers.length; i++) {
 		var li = document.createElement("li");
 		li.appendChild(document.createTextNode(markers[i].title));
 		li.setAttribute("id", markers[i].title);
 		ul.appendChild(li);
+
 	}
+	showListings(markers, map);
 	}
 
 };
