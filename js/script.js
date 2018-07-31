@@ -31,8 +31,7 @@ function markerPositionViewModel(markerPos)
 //These are global variables that will be used throughout the program
 var markers = [];
 var map;
-var infowindow;
-/**
+var infowindow/**
 @Description: This is the call back function that runs all of the other functions. It starts with map initialization and
 marker initializaton. Then it defines the different types of markers. Then it populates the infowindows and
 adds event listeners.
@@ -191,14 +190,10 @@ and google's distance matrix api
 function populateInfoWindowIncludingDistanceInfo(marker, infowindow,  durationText, distanceText) {
 	if (infowindow.marker != marker) {
 			var wikiUrl = ' https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles='+ marker.title + '&redirects&callback=?'
-
-			var wikiRequestTimeout = setTimeout(function() {
-				$wikiElem.text('failed to get wikipedia resources');
-			}, 8000000);
-
 			$.ajax({
 					url: wikiUrl,
 					dataType: 'jsonp',
+					timeout: 20000,
 					success: function(response) {
 						pageId = Object.keys(response.query.pages)[0];
 						infowindow.marker = marker;
@@ -206,7 +201,10 @@ function populateInfoWindowIncludingDistanceInfo(marker, infowindow,  durationTe
 							 + '<div>' + response['query']['pages'][String(pageId)]['extract'] + '</div>');
 						infowindow.open(map, marker);
 						marker.setMap(map);
-						}
+					},
+					error: function(parsedJSON, textStatus, errorThrown) {
+						infowindow.setContent('<h3>' + parsedJSON.status + "</h3><br><h3>" + textStatus + "</h3><br><h3>" + errorThrown + "</h3>");
+					}
 			});
 
 			}
@@ -308,9 +306,9 @@ function hideMarkersBasedOnTitle(markers, title) {
 @description: This method filters and displays the appropriate markers on both the list and map
 **/
 function filterAndDisplayMarkers() {
-	var suggestion = document.getElementById('filter-by-name').value
+	var suggestion = document.getElementById('filter-by-name').value;
 	//The next 6 lines populate the markers list.
-	var ul = document.getElementById("ListOfPlaces")
+	var ul = document.getElementById("ListOfPlaces");
 
 	if (suggestion) {
 		hideMarkersBasedOnTitle(markers, suggestion);
@@ -363,7 +361,8 @@ function displayMarkersWithinTime(response) {
 					atLeastOne = true;
 					// Create a mini infowindow to open immediately and contain the
 					// distance and duration
-					populateInfoWindowIncludingDistanceInfo(markers[i], infowindow, durationText, distanceText);
+					populateInfoWindowIncludingDistanceInfo(markers[i], infowindow, durationText, distanceText));
+
 					};
 				}
 
