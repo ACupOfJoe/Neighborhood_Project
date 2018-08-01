@@ -32,6 +32,14 @@ function markerPositionViewModel(markerPos)
 var markers = [];
 var map;
 
+function dataInput() { 
+	this.filter_by_name = ko.observable(""); 
+}
+
+di = new dataInput(); 
+ko.applyBindings(di);
+
+
 /**
 @Description: This is the call back function that runs all of the other functions. It starts with map initialization and
 marker initializaton. Then it defines the different types of markers. Then it populates the infowindows and
@@ -108,7 +116,7 @@ function execute() {
 		// This autocomplete is for usei nthe saerch within time entry box.
 	var timeAutocomplete = new google.maps.places.Autocomplete(
 		document.getElementById('starting_location_string'));
-	document.getElementById('starting_location_button').addEventListener('click', function() {
+		document.getElementById('starting_location_button').addEventListener('click', function() {
 					searchWithinTime()
 				});
 };
@@ -216,7 +224,7 @@ distance (by time) of a specified location
 **/
 function searchWithinTime() {
 	var distanceMatrixService = new google.maps.DistanceMatrixService();
-	var address = document.getElementById('starting_location_string').value
+	var address = dataInput.Starting_Location_String();
 	if (address == '') {
 		window.alert('Sorry! You need to enter an address');
 	}
@@ -284,7 +292,8 @@ function hideMarkersBasedOnTitle(markers, title) {
 @description: This method filters and displays the appropriate markers on both the list and map
 **/
 function filterAndDisplayMarkers() {
-	var suggestion = document.getElementById('filter-by-name').value;
+	var suggestion = di.filter_by_name()
+	console.log(suggestion)
 	//The next 6 lines populate the markers list.
 	var ul = document.getElementById("ListOfPlaces");
 
