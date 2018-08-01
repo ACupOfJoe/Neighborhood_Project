@@ -25,9 +25,9 @@
 			<input id="starting_location_button" type="button" value="Go!">
 			<h3>Filter the Markers By Name</h3>
 			<input type="text" data-bind="textInput: filter_by_name" id="filter-by-name" placeholder="Ex: Seattle, WA"  onchange="filterAndDisplayMarkers()">
-			<ul id="ListOfPlaces">
-			</ul>
-
+			<ol data-bind="foreach: markers">
+					<li data-bind="text: $data"></li>
+			</ol>
 		</div>
 		<div id="map"></div>
 	</div>

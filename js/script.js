@@ -34,6 +34,7 @@ var map;
 
 function dataInput() { 
 	this.filter_by_name = ko.observable(""); 
+	this.markers = ko.observableArray([]);
 }
 
 di = new dataInput(); 
@@ -259,27 +260,11 @@ function searchWithinTime() {
 function hideMarkersBasedOnTitle(markers, title) {
 	console.log(markers)
 	var ul = document.getElementById("ListOfPlaces")
-	//This forloop clears all the existing elements
-	for (var j = 0; j < markers.length; j++) {
-		var li = document.getElementById(markers[j].title);
-		if (document.getElementById(markers[j].title) != null) {
-			li.outerHTML = '';
-		}
-
-	}
 	for (var i = 0 ; i < markers.length; i++)  {
 		if (markers[i].title.includes(title)) {
 			markers[i].setMap(map);
-			//The next 4 lines prevents duplications from happening.
-			var li = document.getElementById(markers[i].title);
-			if (document.getElementById(markers[i].title) != null) {
-				li.outerHTML = '';
-			}
-			var li = document.createElement("li");
-			li.appendChild(document.createTextNode(markers[i].title));
-			li.setAttribute("id", markers[i].title);
-			ul.appendChild(li);
-
+			console.log(markers[i].title);
+			di.markers.push(markers[i].title);
 		}
 		else {
 			markers[i].setMap(null);
@@ -301,12 +286,8 @@ function filterAndDisplayMarkers() {
 		hideMarkersBasedOnTitle(markers, suggestion);
 	}
 	else {
-		for (i = 0; i < markers.length; i++) {
-		var li = document.createElement("li");
-		li.appendChild(document.createTextNode(markers[i].title));
-		li.setAttribute("id", markers[i].title);
-		ul.appendChild(li);
-
+	for (i = 0; i < markers.length; i++) { 
+		di.markers.push(markers[i].title)
 	}
 	showListings(markers, map);
 	}
