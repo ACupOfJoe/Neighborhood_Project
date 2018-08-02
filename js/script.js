@@ -1,3 +1,5 @@
+
+
 /**
 @description: This is the model that holds latitude, longitude, and name of a marker
 @constructor
@@ -32,12 +34,12 @@ function markerPositionViewModel(markerPos)
 var markers = [];
 var map;
 
-function dataInput() { 
-	this.filter_by_name = ko.observable(""); 
+function dataInput() {
+	this.filter_by_name = ko.observable("");
 	this.markers = ko.observableArray([]);
 }
 
-di = new dataInput(); 
+di = new dataInput();
 ko.applyBindings(di);
 
 
@@ -286,7 +288,7 @@ function filterAndDisplayMarkers() {
 		hideMarkersBasedOnTitle(markers, suggestion);
 	}
 	else {
-	for (i = 0; i < markers.length; i++) { 
+	for (i = 0; i < markers.length; i++) {
 		di.markers.push(markers[i].title)
 	}
 	showListings(markers, map);
@@ -344,4 +346,4 @@ function displayMarkersWithinTime(response) {
 			}
 	}
 }
-};
+}
