@@ -1,34 +1,5 @@
 
 
-/**
-@description: This is the model that holds latitude, longitude, and name of a marker
-@constructor
-@param {float} latitude - this is the latitude of the marker
-@param {float} longitude - this is the longitude of the marker
-@param {string} name - this is the name of the marker
-**/
-function markerPosition(latitude, longitude, name)
-{
-	this.Latitude = latitude;
-	this.Longitude = longitude;
-	this.Name = name;
-}
-
-/**
-@description: This is the view model that holds latitude, longitude, and name of a marker
-@constructor
-@param {float} latitude - this is the latitude of the view model
-@param {float} longitude - this is the longitude of the view model
-@param {string} name - this is the name of the view model
-**/
-
-
-function markerPositionViewModel(markerPos)
-{
-	this.Latitude = ko.observable(markerPos.Latitude);
-	this.Longitude = ko.observable(markerPos.Longitude);
-	this.Name = ko.observable(markerPos.Name);
-}
 
 //These are global variables that will be used throughout the program
 var markers = [];
@@ -37,6 +8,7 @@ var map;
 function dataInput() {
 	this.filter_by_name = ko.observable("");
 	this.markers = ko.observableArray([]);
+	this.starting_location_string = ko.observable("");
 }
 
 di = new dataInput();
@@ -67,25 +39,7 @@ function execute() {
 			infowindow = new google.maps.InfoWindow();
 		};
 	initMap();
-	var burkeGilmanTrail = new markerPosition(47.69589, -122.278065, 'Burke-Gilman Trail');
-	var discoveryPark = new markerPosition(47.657302, -122.405496, 'Discovery Park (Seattle)');
-	var rattlesnakeLedge = new  markerPosition(47.445825, -121.794994, 'Rattlesnake Ridge');
-	var mountSi =  new markerPosition(47.3027, -121.4424, 'Mount Si');
-	var mountPilchuck = new markerPosition(48.03287, -121.47521, 'Mount Pilchuck');
-	var summerlandMountRanier = new markerPosition(46.888362, -121.611019, 'Mount Ranier');
-	var twinFallsWashington = new markerPosition(47.44542, -121.69638, 'Twin Falls (Washington)');
-
-	var burkeGilmanTrailViewModel = new markerPositionViewModel(burkeGilmanTrail);
-	var discoveryParkViewModel = new markerPositionViewModel(discoveryPark);
-	var rattlesnakeLedgeViewModel = new markerPositionViewModel(rattlesnakeLedge);
-	var mountSiViewModel = new markerPositionViewModel(mountSi);
-	var mountPilchuckViewModel = new markerPositionViewModel(mountPilchuck);
-	var summerlandMountRanierViewModel = new markerPositionViewModel(summerlandMountRanier);
-	var twinFallsWashingtonViewModel = new markerPositionViewModel(twinFallsWashington);
-
-	var locations = ([burkeGilmanTrailViewModel, discoveryParkViewModel,
-						rattlesnakeLedgeViewModel, mountSiViewModel,
-						mountPilchuckViewModel, summerlandMountRanierViewModel, twinFallsWashingtonViewModel]);
+	
 	var largeInfowindow = new google.maps.InfoWindow();
 
 
@@ -112,6 +66,7 @@ function execute() {
 			marker.addListener('click', function() {
 				populateInfoWindow(this, largeInfowindow);
 				toggleBounce(this)
+
 			});
 
 
@@ -221,38 +176,7 @@ function makeMarkerIcon(markerColor) {
 }
 
 
-/**
-@description: This method figures if the any of the markers in the markers list are within a specific
-distance (by time) of a specified location
-**/
-function searchWithinTime() {
-	var distanceMatrixService = new google.maps.DistanceMatrixService();
-	var address = dataInput.Starting_Location_String();
-	if (address == '') {
-		window.alert('Sorry! You need to enter an address');
-	}
-	else {
-		hideListings(markers);
-		var origins= [];
-		for (var i = 0; i < markers.length; i++) {
-			origins[i] = markers[i].position;
-		}
-	var destination = address;
-	distanceMatrixService.getDistanceMatrix({
-		origins: origins,
-		destinations: [destination],
-		travelMode: google.maps.TravelMode['DRIVING'],
-		unitSystem: google.maps.UnitSystem.IMPERIAL
 
-	},  function(response, status) {
-			if (status !== google.maps.DistanceMatrixStatus.OK) {
-			  window.alert('Error was: ' + status);
-			} else {
-			  displayMarkersWithinTime(response);
-			}
-			});
-	}
-}
 
 /**
 @description: This method is used to hide markers based on their title from both the map and the list
@@ -285,6 +209,9 @@ function filterAndDisplayMarkers() {
 	var ul = document.getElementById("ListOfPlaces");
 
 	if (suggestion) {
+		for (i = 0; i < markers.length; i++) { 
+			di.markers.pop();
+		}
 		hideMarkersBasedOnTitle(markers, suggestion);
 	}
 	else {
@@ -295,6 +222,39 @@ function filterAndDisplayMarkers() {
 	}
 
 };
+
+/**
+@description: This method figures if the any of the markers in the markers list are within a specific
+distance (by time) of a specified location
+**/
+function searchWithinTime() {
+	var distanceMatrixService = new google.maps.DistanceMatrixService();
+	var address = document.getElementById('starting_location_string').value;
+	if (address == '') {
+		window.alert('Sorry! You need to enter an address');
+	}
+	else {
+		hideListings(markers);
+		var origins= [];
+		for (var i = 0; i < markers.length; i++) {
+			origins[i] = markers[i].position;
+		}
+	var destination = address;
+	distanceMatrixService.getDistanceMatrix({
+		origins: origins,
+		destinations: [destination],
+		travelMode: google.maps.TravelMode['DRIVING'],
+		unitSystem: google.maps.UnitSystem.IMPERIAL
+
+	},  function(response, status) {
+			if (status !== google.maps.DistanceMatrixStatus.OK) {
+			  window.alert('Error was: ' + status);
+			} else {
+			  displayMarkersWithinTime(response);
+			}
+			});
+	}
+}
 
 /**
 @description: This method is used to display all the markers that fit a certain time radius
@@ -331,19 +291,17 @@ function displayMarkersWithinTime(response) {
 					//markers[i].setMap(map);
 					atLeastOne = true;
 					// Create a mini infowindow to open immediately and contain the
-					// distance and duration
-					var infowindow = new google.maps.InfoWindow({
-                  	content: "<h3>" + markers[i].title + "</h3><br>" + durationText + ' away, ' + distanceText });
-	                infowindow.open(map, markers[i]);
-	                // Put this in so that this small window closes if the user clicks
-	                // the marker, when the big infowindow opens
-	                markers[i].infowindow = infowindow;
-	                google.maps.event.addListener(markers[i], 'click', function() {
-	                  this.infowindow.close();
-	                });
-				}
-
+					infowindow.marker= markers[i]; 
+					markers[i].setMap(map);
+					infowindow.setContent("<h3>" + markers[i].title + "</h3><br>" + durationText + ' away, ' + distanceText);
+					infowindow.open(map, markers[i]);
+					google.maps.event.clearListeners(markers[i], 'click');
+					google.maps.event.addListener(markers[i], "click", function() { 
+						infowindow.setContent("<h3>" + this.title + "</h3><br>" + durationText + ' away, ' + distanceText);
+						infowindow.open(map, this);
+					})
 			}
 	}
+}
 }
 }
