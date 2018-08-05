@@ -14,6 +14,7 @@ function dataInput() {
 di = new dataInput();
 ko.applyBindings(di);
 
+var infowindow;
 
 /**
 @Description: This is the call back function that runs all of the other functions. It starts with map initialization and
@@ -40,7 +41,6 @@ function execute() {
 		};
 	initMap();
 	
-	var largeInfowindow = new google.maps.InfoWindow();
 
 
 	//These parts were borrowed from "ud864-maps-api/Project_Code_5_BeingStylish.html"
@@ -64,11 +64,10 @@ function execute() {
 
 			markers.push(marker)
 			marker.addListener('click', function() {
-				populateInfoWindow(this, largeInfowindow);
+				populateInfoWindow(this, infowindow);
 				toggleBounce(this)
 
 			});
-
 
 	}
 		// This autocomplete is for usei nthe saerch within time entry box.
@@ -148,17 +147,6 @@ function populateInfoWindow(marker, infowindow) {
 				infowindow.marker = null;
 		})
 }
-/**
-@description: This function populates the infowindows with content from the wikipedia api
-and google's distance matrix api
-@param (marker) marker: This parameter is the marker whose infowindow we want to populate
-@param (infowindow) infowindow: This parmaeter is the infowindow object that we are manipulating
-**/
-
-
-// This function takes in a COLOR, and then creates a new marker
-// icon of that color. The icon will be 21 px wide by 34 high, have an origin
-// of 0, 0 and be anchored at 10, 34).
 
 /**
 @description: This method creates a marker icon from a specific color
@@ -191,6 +179,12 @@ function hideMarkersBasedOnTitle(markers, title) {
 			markers[i].setMap(map);
 			console.log(markers[i].title);
 			di.markers.push(markers[i].title);
+			google.maps.event.clearInstanceListeners(markers[i]);
+			markers[i].addListener('click', function() {
+				populateInfoWindow(this, infowindow);
+				toggleBounce(this)
+
+			});
 		}
 		else {
 			markers[i].setMap(null);
@@ -207,7 +201,6 @@ function filterAndDisplayMarkers() {
 	console.log(suggestion)
 	//The next 6 lines populate the markers list.
 	var ul = document.getElementById("ListOfPlaces");
-
 	if (suggestion) {
 		for (i = 0; i < markers.length; i++) { 
 			di.markers.pop();
@@ -217,7 +210,8 @@ function filterAndDisplayMarkers() {
 	else {
 	for (i = 0; i < markers.length; i++) {
 		di.markers.push(markers[i].title)
-	}
+
+}
 	showListings(markers, map);
 	}
 
@@ -293,8 +287,6 @@ function displayMarkersWithinTime(response) {
 					// Create a mini infowindow to open immediately and contain the
 					infowindow.marker= markers[i]; 
 					markers[i].setMap(map);
-					infowindow.setContent("<h3>" + markers[i].title + "</h3><br>" + durationText + ' away, ' + distanceText);
-					infowindow.open(map, markers[i]);
 					google.maps.event.clearListeners(markers[i], 'click');
 					google.maps.event.addListener(markers[i], "click", function() { 
 						infowindow.setContent("<h3>" + this.title + "</h3><br>" + durationText + ' away, ' + distanceText);
