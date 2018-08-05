@@ -262,7 +262,6 @@ function searchWithinTime() {
 the distance in time from an origin to a destination.
 **/
 function displayMarkersWithinTime(response) {
-	alert("Hello world")
 	var maxDuration = document.getElementById('time_radius').value;
 	var origins = response.originAddresses;
 	var destination = response.destinationAddresses;
