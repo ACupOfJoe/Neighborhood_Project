@@ -262,6 +262,7 @@ function searchWithinTime() {
 the distance in time from an origin to a destination.
 **/
 function displayMarkersWithinTime(response) {
+	alert("Hello world")
 	var maxDuration = document.getElementById('time_radius').value;
 	var origins = response.originAddresses;
 	var destination = response.destinationAddresses;
@@ -304,4 +305,11 @@ function displayMarkersWithinTime(response) {
 	}
 }
 }
+}
+
+/**
+@description: This function gives an alert when the google api doesn't work. 
+**/
+function googleError() { 
+	alert("Sorry. The Script Failed to Load (onerror)");
 }
