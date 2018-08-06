@@ -9,7 +9,14 @@ function dataInput() {
 	this.filter_by_name = ko.observable("");
 	this.markers = ko.observableArray([]);
 	this.starting_location_string = ko.observable("");
+	this.identifyMarker = function(marker) { 
+		toggleBounce(marker)
+		infowindow = new google.maps.InfoWindow();
+		populateInfowindow(marker, infowindow)
+		infowindow.open();
+	}
 }
+
 
 di = new dataInput();
 ko.applyBindings(di);
@@ -178,7 +185,7 @@ function hideMarkersBasedOnTitle(markers, title) {
 		if (markers[i].title.includes(title)) {
 			markers[i].setMap(map);
 			console.log(markers[i].title);
-			di.markers.push(markers[i].title);
+			di.markers.push(markers[i]);
 			google.maps.event.clearInstanceListeners(markers[i]);
 			markers[i].addListener('click', function() {
 				populateInfoWindow(this, infowindow);
@@ -209,7 +216,7 @@ function filterAndDisplayMarkers() {
 	}
 	else {
 	for (i = 0; i < markers.length; i++) {
-		di.markers.push(markers[i].title)
+		di.markers.push(markers[i])
 
 }
 	showListings(markers, map);
@@ -297,6 +304,8 @@ function displayMarkersWithinTime(response) {
 }
 }
 }
+
+
 
 /**
 @description: This function gives an alert when the google api doesn't work. 

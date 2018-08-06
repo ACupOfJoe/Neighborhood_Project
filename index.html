@@ -12,7 +12,7 @@
 	<div class="container">
 		<!-- Lines 14 - were borrowed from "My Commute - Distance Matrix API Part 2 from Udacity's Lecture Series" -->
 		<div id="panel">
-			<div id="title1">
+			<div id="title">
 			<h3>Find some local hiking places within a certain radius from a starting location of your choosing!</h3>
 			</div>
 			<select id='time_radius'>
@@ -26,7 +26,7 @@
 			<h3>Filter the Markers By Name</h3>
 			<input type="text" data-bind="textInput: filter_by_name" id="filter-by-name" placeholder="Ex: Seattle, WA"  onchange="filterAndDisplayMarkers()">
 			<ol data-bind="foreach: markers">
-					<li data-bind="text: $data"></li>
+					<li data-bind="text: $data.title, click: $parent.identifyMarker"></li>
 			</ol>
 		</div>
 		<div id="map"></div>
