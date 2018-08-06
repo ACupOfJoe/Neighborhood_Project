@@ -12,9 +12,10 @@ function dataInput() {
 	this.identifyMarker = function(marker) { 
 		toggleBounce(marker)
 		infowindow = new google.maps.InfoWindow();
-		populateInfowindow(marker, infowindow)
+		populateInfoWindow(marker, infowindow)
 		infowindow.open();
 	}
+
 }
 
 
