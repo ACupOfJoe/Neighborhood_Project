@@ -182,7 +182,7 @@ function hideMarkersBasedOnTitle(markers, title) {
 	console.log(markers)
 	var ul = document.getElementById("ListOfPlaces")
 	for (var i = 0 ; i < markers.length; i++)  {
-		if (markers[i].title.includes(title)) {
+		if (markers[i].title.toLowerCase().includes(title.toLowerCase())) {
 			markers[i].setMap(map);
 			console.log(markers[i].title);
 			di.markers.push(markers[i]);
