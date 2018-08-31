@@ -1,5 +1,5 @@
 # Introduction
-This project is a responsive website that utilizes the google maps api and wikipedia article api to create a neighrborhood map with clickable markers. It contains html, css, and javascript.
+This project is a responsive website that utilizes the Google Maps API and Wikipedia Article API to create a neighborhood map with clickable markers. It is written with html, css, and javascript.
 
 
 # Requirements
